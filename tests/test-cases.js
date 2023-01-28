@@ -1204,6 +1204,30 @@ var PARSE_TESTS = [
 		}
 	},
 	{
+		description: "Pipe delimiter is guessed correctly when high delta in commas",
+		notes: "Lower delta should be better",
+		input: 'one|two|three|four|five\none|two,two,two,two|three|four|five\none|two,two,two|three|four|five',
+		config: {},
+		expected: {
+			data: [
+				['one','two','three','four','five'],
+				['one','two,two,two,two','three','four','five'],
+				['one','two,two,two','three','four','five']
+			],
+			errors: []
+		}
+	},
+	{
+		description: "Correct delimiter is guessed when deltas are equal, but one produces more",
+		notes: "When deltas are equal, the higher number of fields should be chosen",
+		config: {},
+		input: 'a,b,c\na,b,c|d|e|f',
+		expected: {
+			data: [['a', 'b', 'c'], ['a','b','c|d|e|f']],
+			errors: []
+		}
+	},
+	{
 		description: "Single quote as quote character",
 		notes: "Must parse correctly when single quote is specified as a quote character",
 		input: "a,b,'c,d'",

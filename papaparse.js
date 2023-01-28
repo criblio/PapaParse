@@ -1252,7 +1252,7 @@ License: MIT
 
 		function guessDelimiter(input, newline, skipEmptyLines, comments, delimitersToGuess)
 		{
-			var bestDelim, bestDelta, fieldCountPrevRow;
+			var bestDelim, bestDelta, fieldCountPrevRow, maxFieldCount;
 
 			delimitersToGuess = delimitersToGuess || [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP];
 
@@ -1281,10 +1281,10 @@ License: MIT
 
 					if (typeof fieldCountPrevRow === 'undefined')
 					{
-						fieldCountPrevRow = 0;
+						fieldCountPrevRow = fieldCount;
 						continue;
 					}
-					else if (fieldCount > 1)
+					else if (fieldCount > 0)
 					{
 						delta += Math.abs(fieldCount - fieldCountPrevRow);
 						fieldCountPrevRow = fieldCount;
@@ -1294,11 +1294,13 @@ License: MIT
 				if (preview.data.length > 0)
 					avgFieldCount /= (preview.data.length - emptyLinesCount);
 
-				if ((typeof bestDelta === 'undefined' || delta > bestDelta)
+				if ((typeof bestDelta === 'undefined' || delta <= bestDelta)
+					&& (typeof maxFieldCount === 'undefined' || avgFieldCount > maxFieldCount)
 					&& avgFieldCount > 1.99)
 				{
 					bestDelta = delta;
 					bestDelim = delim;
+					maxFieldCount = avgFieldCount;
 				}
 			}
 
